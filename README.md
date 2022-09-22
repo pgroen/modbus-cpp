@@ -1,2 +1,2 @@
-# modbusslave
-A TCP / RTU modbus slave for testing ModBus master software
+# modbus-cpp
+A TCP / RTU modbus library written in c++ as a header-only.
