@@ -89,17 +89,156 @@ The MODBUS protocol defines three PDUs. They are :<br>
 
 
 ### Data Encoding
-
- MODBUS uses a ‘big-Endian’ representation for addresses and data items. This means
-that when a numerical quantity larger than a single byte is transmitted, the most significant
-byte is sent first. So for example
-Register size
- value
-16 - bits
- 0x1234
- Note: For more details, see [1] .
-April 26, 2012
-the first byte sent is
- 0x12
-http://www.modbus.org
-then 0x34
+
+MODBUS uses a ‘big-Endian’ representation for addresses and data items. This means that when a numerical quantity larger than a single byte is transmitted, the most significant
+byte is sent first. So for example : 
+
+| Register size |  value |
+|---------------|--------|
+| 16 - bits     | 0x1234 |
+
+the first byte sent is 0x12 then 0x34. By bitshifting and adding, the original value can be compiled. ( 0x12 << 8u = 0x1200 + 0x34 = 0x1234 )
+
+## MODBUS Data Model
+MODBUS bases its data model on a series of tables that have distinguishing characteristics. The four primary tables are:
+
+| Primary tables | Object type | Type of | Comments |
+|----------------|-------------|---------|----------|
+| Discretes Input | Single Bit | Read-Only | This type of data can be provided by an I/O system. |
+| Coils | Single Bit | Read-Write | This type of data can be alterable by an application program. |
+| Input Registers | 16-bit word | Read-Only | This type of data can be provided by an I/O system |
+| Holding Registers | 16-bit word | Read-Write | This type of data can be alterable by an application program. |
+
+The distinctions between inputs and outputs, and between bit -addressable and word-
+addressable data items, do not imply any application behavior. It is perfectly acceptable, and
+very common, to regard all four tables as overlaying one another, if this is the most natural
+interpretation on the target machine in question.
+For each of the primary tables, the protocol allows individual selection of 65536 data items,
+and the operations of read or write of those items are designed to span multiple consecutive
+data items up to a data size limit which is dependent on the transaction function code.
+It’s obvious that all the data handled via MODBUS (bits, registers) must be located in device
+application memory. But physical address in memory should not be confused with data
+reference. The only requirement is to link data reference with physical address.
+MODBUS logical reference numbers, which are used in MODBUS funct ions, are unsigned
+integer indices starting at zero.
+
+## MODBUS Adressing Model
+The MODBUS application protocol defines precisely PDU addressing rules.
+In a MODBUS PDU each data is addressed from 0 to 65535.
+It also defines clearly a MODBUS data model composed of 4 blocks that comprises several
+elements numbered from 1 to n.
+In the MODBUS data Model each element within a data block is numbered from 1 to n.
+Afterwards the MODBUS data model has to be bound to the device application ( IEC -61131
+object, or other application model).
+The pre-mapping between the MODBUS data model and the device application is totally
+vendor device specific.
+
+![MODBUS Addressing Model](graphics/08_modbus_addressing_model.png)
+
+## Define MODBUS Transaction
+The following state diagram describes the generic processing oif a MODBUS transaction in server side.
+
+![MODBUS Transaction State Diagram](graphics/09_modbus_state_diagram.png)
+
+Once the request has been processed by a server, a MODBUS response using the
+adequate MODBUS server transaction is built.
+Depending on the result of the processing two types of response are built :
+
+ * A positive MODBUS response :
+    * the response function code = the request function code
+
+ * A MODBUS Exception response ( see section 7 ):
+    * the objective is to provide to the client relevant information concerning the
+error detected during the processing ;
+    * the exception function code = the request function code + 0x80 ;
+    * an exception code is provided to indicate the reason of the error.
+
+## Function Code Categories
+
+There are three categories of MODBUS Functions codes. They are :
+
+<strong>Public Function Codes</strong>
+
+* Are well defined function codes,
+* guaranteed to be unique,
+* validated by the MODBUS.org community,
+* publicly documented
+* have available conformance test,
+* includes both defined public assigned function codes as well as unassigned function codes reserved for future use.
+
+<strong>User-Defined Function Codes</strong>
+
+* there are two ranges of user-defined function codes, i.e. 65 to 72 and from 100 to 110 decimal.
+* user can select and implement a function code that is not supported by the specification.
+* there is no guarantee that the use of the selected function code will be unique
+* if the user wants to re-position the functionality as a public function code, he must
+initiate an RFC to introduce the change into the public category and to have a new
+public function code assigned.
+* MODBUS Organization, Inc expressly reserves the right to develop the proposed RFC.
+
+<strong>Reserved Function Codes</strong>
+
+* Function Codes currently used by some companies for legacy products and that
+are not available for public use.
+
+### Public Function Code Definition
+
+| Domain | #Bits | Type | Description          | Function code | Sub code | (hex) |
+|--------|-------|------|----------------------|---------------|----------|-------|
+| Data Access | Bit Access | Physical Discrete Inputs | Read Discrete Inputs | 02            |          | 0x02  |
+| | | Internal Bits or Physical Coils| Read Coils           | 01            |          | 0x01  |
+| | |                                | Write Single Coil    | 05            |          | 0x05  |
+| | |                                | Write Multiple Coils | 15            |          | 0x0F  |
+| | 16 bits access| Physical Input Registers       | Read Input Register  | 04 | | 0x04 |
+| | | Internal Registers or Physical Ouput Registers| Read Holding Registers | 03 |  | 0x03 |
+| | |                                | Write Single Register | 06 | | 0x06 |
+| | |                                | Write multiple Registers | 16 |  | 0x10 |
+| | |                                | Read/Write Multiple Registers | 23 | | 0x17 |
+| | |                                | Mask Write Register | 22 |  | 0x16 |
+| | |                                | Read FIFO queue | 24 |  | 0x18 |
+| | | File Record Access             | Read File record | 20 | | 0x14 |
+| | |                                | Write File Record | 21 |  | 0x15 |
+| Diagnostics | | | Read Exception Status | 07 | | 0x07 |
+| | | | Diagnostic | 08 | 00-18,20 | 0x08 |
+| | | | Get Com event counter | 11 | | 0x0B |
+| | | | Get Com Event Log | 12 | | 0x0C |
+| | | | Report Server ID | 17 | | 0x11 |
+| | | | Read device Identification | 43 | 14 | 0x2B |
+| Other | | | Encapsulated Interface Transport | 43 | 13, 14 | 0x2B |
+| | | | CANopen General Reference | 43 | 13 | 0x2B |
+
+## Function codes descriptions
+
+### 01 (0x01) Read Coils
+This function code is used to read from 1 to 2000 contiguous status of coils in a remote
+device. The Request PDU specifies the starting address, i.e. the address of the first coil
+specified, and the number of coils. In the PDU Coils are addressed starting at zero. Therefore
+coils numbered 1-16 are addressed as 0-15.<br>
+The coils in the response message are packed as one coil per bit of the data field. Status is
+indicated as 1= ON and 0= OFF. The LSB of the first data byte contains the output addressed
+in the query. The other coils follow toward the high order end of this byte, and from low order
+to high order in subsequent bytes.<br>
+If the returned output quantity is not a multiple of eight, the remaining bits in the final data
+byte will be padded with zeros (toward the high order end of the byte). The Byte Count field
+specifies the quantity of complete bytes of data.
+
+#### Request
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x01</strong> |
+| Starting Address | 2 Bytes | 0x0000 to 0xFFFF |
+| Quantity of coils | 2 Bytes | 1 to 2000 (0x7D0) |
+
+#### Response
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x01</strong> |
+| Byte count | 1 Byte | <strong>N*</strong> |
+| Coil Status | <strong>n</strong> Byte | n = N or N + 1 |
+
+<strong>*N</strong> = Quantity of Outputs / 8, if the remainder is different of 0 => N = N+1
+
+#### Error
+
