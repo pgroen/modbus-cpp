@@ -258,12 +258,169 @@ Here is an example of a request to read discrete output 20-38:
 | Quantity of Outputs Hi | 0x00 | Outputs status 25-28 | 0x6B |
 | Quantity of Outputs Lo | 0x13 | Outputs status 38-36 | 0x05 |
 
-The status of outputs 27–20 is shown as the byte value CD hex, or binary 1100 1101. Output
-27 is the MSB of this byte, and output 20 is the LSB.
-By convention, bits within a byte are shown with the MSB to the left, and the LSB to the right.
-Thus the outputs in the first byte are ‘27 through 20’, from left to right. The next byte has
-outputs ‘35 through 28’, left to right. As the bits are transmitted serially, they flow from LSB to
-MSB: 20 . . . 27, 28 . . . 35, and so on.
-In the last data byte, the status of outputs 38-36 is shown as the byte value 05 hex, or binary
-0000 0101. Output 38 is in the sixth bit position from the left, and output 36 is the LSB of this
-byte. The five remaining high order bits are zero filled.
+The status of outputs 27–20 is shown as the byte value CD hex, or binary 1100 1101. Output 27 is the MSB of this byte, and output 20 is the LSB.
+By convention, bits within a byte are shown with the MSB to the left, and the LSB to the right. Thus the outputs in the first byte are ‘27 through 20’, from left to right. The next byte has outputs ‘35 through 28’, left to right. As the bits are transmitted serially, they flow from LSB to MSB: 20 . . . 27, 28 . . . 35, and so on.<br>
+In the last data byte, the status of outputs 38-36 is shown as the byte value 05 hex, or binary 0000 0101. Output 38 is in the sixth bit position from the left, and output 36 is the LSB of this byte. The five remaining high order bits are zero filled.
+
+### 02 (0x02) Read Discrete Inputs
+This function code is used to read from 1 to 2000 contiguous status of discrete inputs in a remote device. The Request PDU specifies the starting address, i.e. the address of the first input specified, and the number of inputs. In the PDU Discrete Inputs a re addressed starting
+at zero. Therefore Discrete inputs numbered 1-16 are addressed as 0-15.
+The discrete inputs in the response message are packed as one input per bit of the data field.
+Status is indicated as 1= ON; 0= OFF. The LSB of the first data byte contains the input
+addressed in the query. The other inputs follow toward the high order end of this byte, and from low order to high order in subsequent bytes.
+If the returned input quantity is not a multiple of eight, the remaining bits in the final d ata byte will be padded with zeros (toward the high order end of the byte). The Byte Count field specifies the quantity of complete bytes of data.
+
+#### Request
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x02</strong> |
+| Starting Address | 2 Bytes | 0x0000 to 0xFFFF |
+| Quantity of Inputs | 2 Bytes | 1 to 2000 (0x7D0) |
+
+#### Response
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x02</strong> |
+| Byte count | 1 Byte | <strong>N*</strong> |
+| Input Status | <strong>N*</strong> x 1 Byte | n = N or N + 1 |
+
+<strong>*N</strong> = Quantity of Outputs / 8, if the remainder is different of 0 => N = N+1
+
+#### Error
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function Code | 1 Byte | <strong>Function code + 0x82</strong> |
+| Exception Code | 1 Byte |  01, 02, 03 or 04 |
+
+The status of discrete inputs 204–197 is shown as the byte value AC hex, or binary 1010 1100. Input 204 is the MSB of this byte, and input 197 is the LSB. The status of discrete inputs 218–213 is shown as the byte value 35 hex, or binary 0011 0101. Input 218 is in the third bit position from the left, and input 213 is the LSB.
+
+### 03 (0x03) Read Holding Registers
+This function code is used to read the contents of a contiguous block of holding registers in a remote device. The Request PDU specifies the starting r egister address and the number of registers. In the PDU Registers are addressed starting at zero. Therefore registers numbered 1-16 are addressed as 0-15. The register data in the response message are packed as two bytes per register, with the binary contents right justified within each byte. For each register, the first byte contains the high order bits and the second contains the low order bits.
+
+#### Request
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x03</strong> |
+| Starting Address | 2 Bytes | 0x0000 to 0xFFFF |
+| Quantity of Registers | 2 Bytes | 1 to 125 (0x7D) |
+
+#### Response
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x03</strong> |
+| Byte count | 1 Byte | <strong>2 x N*</strong> |
+| Register value | <strong>N*</strong> x 2 Bytes | |
+
+<strong>*N</strong> = Quantity of Registers
+
+#### Error
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function Code | 1 Byte | <strong>Function code + 0x83</strong> |
+| Exception Code | 1 Byte |  01, 02, 03 or 04 |
+
+Here is an example of a request to read registers 108 - 110:
+
+|Request| | Response| |
+|---|---|----|---|
+| Field Name | (Hex) | Field Name | (Hex) |
+| Function   |  0x03 | Function   | 0x03  |
+| Starting Address Hi | 0x00 | Byte Count | 0x06 |
+| Starting Address Lo | 0x6B | Register value Hi (108) | 0x02 |
+| No. of Registers Hi | 0x00 | Register value Lo (108) | 0x2B |
+| No. of Registers Lo | 0x03 | Register value Hi (109) | 0x00 |
+|                     |      | Register value Lo (109) | 0x00 |
+|                     |      | Register value Hi (110) | 0x00 |
+|                     |      | Register value Lo (110) | 0x64 |
+
+The contents of register 108 are shown as the two byte values of 02 2B hex, or 555 decimal. The contents of registers 109–110 are 00 00 and 00 64 hex, or 0 and 100 decimal, respectively.
+
+### 04 (0x04) Read Input Registers
+This function code is used to read from 1 to 125 contiguous input registers in a remote device. The Request PDU specifies the starting register address and the number of registers. In the PDU Registers are addressed starting at zero. Therefore input registers n umbered 1-16 are addressed as 0-15.<br>
+The register data in the response message are packed as two bytes per register, with the binary contents right justified within each byte. For each register, the first byte contains the high order bits and the second contains the low order bits.
+
+#### Request
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x04</strong> |
+| Starting Address | 2 Bytes | 0x0000 to 0xFFFF |
+| Quantity of Input Registers | 2 Bytes | 1 to 125 (0x007D) |
+
+#### Response
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x04</strong> |
+| Byte count | 1 Byte | <strong>2 x N*</strong> |
+| Register value | <strong>N*</strong> x 2 Bytes | |
+
+<strong>*N</strong> = Quantity of Input Registers
+
+#### Error
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function Code | 1 Byte | <strong>Function code + 0x84</strong> |
+| Exception Code | 1 Byte |  01, 02, 03 or 04 |
+
+Here is an example of a request to read input register 9:
+
+|Request| | Response| |
+|---|---|----|---|
+| Field Name | (Hex) | Field Name | (Hex) |
+| Function   | 0x04 | Function   | 0x04 |
+| Starting Address Hi | 0x00 | Byte Count | 0x02 |
+| Starting Address Lo | 0x08 | Input Reg. 9 Hi | 0x00 |
+| Quantity of Input Reg. Hi | 0x00 | Input Reg. 9 Lo | 0x0A |
+| QUantity of Input Reg. Lo | 0x01 | | |
+
+The contents of input register 9 are shown as the two byte values of 00 0A hex, or 10 decimal.
+
+### 05 (0x05) Write Single Coil
+This function code is used to write a single output to either ON or OFF in a remote device. The requested ON/OFF state is specified by a constant in the request data field. A value of FF 00 hex requests the output to be ON. A value of 00 00 requests it to be OFF. All other values are illegal and will not affect the output. The Request PDU specifies the address of the coil to be forced. Coils are addressed starting at zero. Therefore coil numbered 1 is addressed as 0. The requested ON/OFF state is specified by a constant in the Coil Value field. A value of 0XFF00 requests the coil to be ON. A value of 0x0000 requests the coil to be off. All other values are illegal and will not affect the coil.
+
+The normal response is an echo of the request, returned after the coil state has been written.
+
+#### Request
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x05</strong> |
+| Output Address | 2 Bytes | 0x0000 to 0xFFFF |
+| Output Value | 2 Bytes | 0x0000 or 0xFF00 |
+
+#### Response
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Function code | 1 Byte | <strong>0x05</strong> |
+| Output Address | 2 Bytes | 0x0000 to 0xFFFF |
+| Output Value   | 2 Bytes | 0x0000 or 0xFF00 |
+
+<strong>*N</strong> = Quantity of Input Registers
+
+#### Error
+
+| Description | #Bytes | Value |
+|---|---|---|
+| Error Code | 1 Byte | <strong>Function code + 0x85</strong> |
+| Exception Code | 1 Byte |  01, 02, 03 or 04 |
+
+Here is an example of a request to read input register 9:
+
+|Request| | Response| |
+|---|---|----|---|
+| Field Name | (Hex) | Field Name | (Hex) |
+| Function   | 0x05 | Function | 0x05 |
+| Output Address Hi | 0x00 | Output Address Hi | 0x00 |
+| Output Address Lo | 0xAC | Output Address Lo | 0xAC |
+| Output Value Hi   | 0xFF | Output Value Hi   | 0xFF |
+| Output Value Lo   | 0x00 | Output Value Lo   | 0x00 |
+
