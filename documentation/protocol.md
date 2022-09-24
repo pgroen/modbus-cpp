@@ -242,3 +242,28 @@ specifies the quantity of complete bytes of data.
 
 #### Error
 
+| Description | #Bytes | Value |
+|---|---|---|
+| Function Code | 1 Byte | <strong>Function code + 0x80</strong> |
+| Exception Code | 1 Byte |  01, 02, 03 or 04 |
+
+Here is an example of a request to read discrete output 20-38:
+
+|Request | ++ | Response | ++ |
+|--------|----|----------|----|
+| Field Name | (Hex) | Field Name | (Hex) |
+| Function | 0x01 | Function | 0x01 |
+| Starting Address Hi | 0x00 | Byte Count | 0x03 |
+| Starting Address Lo | 0x13 | Outputs status 27-20 | 0xCD |
+| Quantity of Outputs Hi | 0x00 | Outputs status 25-28 | 0x6B |
+| Quantity of Outputs Lo | 0x13 | Outputs status 38-36 | 0x05 |
+
+The status of outputs 27–20 is shown as the byte value CD hex, or binary 1100 1101. Output
+27 is the MSB of this byte, and output 20 is the LSB.
+By convention, bits within a byte are shown with the MSB to the left, and the LSB to the right.
+Thus the outputs in the first byte are ‘27 through 20’, from left to right. The next byte has
+outputs ‘35 through 28’, left to right. As the bits are transmitted serially, they flow from LSB to
+MSB: 20 . . . 27, 28 . . . 35, and so on.
+In the last data byte, the status of outputs 38-36 is shown as the byte value 05 hex, or binary
+0000 0101. Output 38 is in the sixth bit position from the left, and output 36 is the LSB of this
+byte. The five remaining high order bits are zero filled.
