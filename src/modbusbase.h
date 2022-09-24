@@ -55,7 +55,11 @@ public:
     ModbusBase();
     virtual ~ModbusBase();
 
-    void    setSlaveId(int slave_id);
+    /*! 
+     * Set slave id for this context 
+     * \param slave_id - The slave id this system is known under.
+     */
+    void    setSlaveId(int slave_id) { m_slaveId = slave_id; }
 
     // Pure virtuals. Override when inherited.
     virtual bool Connect() const = 0;
@@ -74,11 +78,26 @@ public:
     int writeRegisters(uint16_t address, uint16_t amount, const uint16_t *value);
 
 private:        // Methods
+    /*!
+     * Modbus Request Builder
+     * \param to_send       - Message buffer to be send
+     * \param address       - Reference Address
+     * \param function_code - Modbus Functional Code
+     */
     void        buildRequest(uint8_t *to_send, uint16_t address, int function_code) const;
     int         modbusRead(uint16_t address, uint16_t amount, int function_code);
+    /*!
+     * Write Request Builder and Sender
+     * \param address       - Reference address
+     * \param amount        - Amount of data to be written
+     * \param function_code - Modbus Functional Code
+     * \param value         - Data to be written
+     * 
+     * \return int 
+     */
     int         modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value);
-    ssize_t     modbusSend(uint8_t *to_send, size_t length);
-    ssize_t     modbusReceive(uint8_t *buffer) const;
+    virtual ssize_t     modbusSend(uint8_t *to_send, size_t length) = 0;
+    virtual ssize_t     modbusReceive(uint8_t *buffer) const = 0;
 
     void        modbusErrorHandle(const uint8_t *msg, int function_code);
     void        setBadConnection();
