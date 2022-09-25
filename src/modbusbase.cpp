@@ -19,12 +19,43 @@ int ModbusBase::readInputBits(uint16_t address, uint16_t amount, bool *buffer)
 
 int ModbusBase::readHoldingRegisters(uint16_t address, uitn16_t amount, uint16_t *buffer)
 {
-
+    if (m_connected)
+    {
+        modbusRead(address, amount, READ_REGS);
+        uint8_t to_rec[MAX_MSG_LENGTH];         // <-- Transport layer dependent .. ?
+        ssize_t result = modbusReceive(to_rec);
+        if (result == -1)
+        {
+            setBadConnection();
+            return BAD_CON;
+        }
+        modbusErrorHandle(to_rec, READ_REGS);
+        if (err)
+        {
+            return err_no;
+        }
+        for (auto i = 0; i < amount; i++)
+        {
+            buffer[i] = ((uint16_t)to_rec[9u + 2u * i]) << 8u;
+            buffer[i] += (uint16_t)to_rec[10u + 2u * i];
+        }
+        return 0;
+    }
+    else
+    {
+        setBadConnection();
+        return BAD_CON;
+    }
 }
 
 int ModbusBase::readInputRegisters(uint16_t address, uint16_t amount, uint16_t *buffer)
 {
+    if (m_connected)
+    {
+        modbusRead(address, amount, READ_INPUT_REGS);
+        uint8_t to_rec[MSG_MAX_LENGTH];
 
+    }
 }
 
 int ModbusBase::writeCoil(uint16_t address, const bool &to_write)
@@ -68,8 +99,9 @@ int ModbusBase::modbusRead(uint16_t address, uint16_t amount, int function_code)
     uint8_t to_send[12];
     buildRequest(to_send, address, function_code);
     to_send[5] = 6;
-    to_send[10] = (uint8_t)
-    }
+    to_send[10] = (uint8_t)(amount >> 8u);
+    to_send[11] = (uint8_t)(amount & 0x00FFu);
+    return modbusSend(to_send, 12);
 }
 
 int ModbusBase::modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value)

@@ -69,7 +69,23 @@ public:
     // Modbus implementation(s)
     int readCoils(uint16_t address, uint16_t amount, bool *buffer);     // Replace buffer with something sensible?
     int readInputBits(uint16_t address, uint16_t amount, bool *buffer); // Replace buffer with something sensible?
+
+    /*!
+     * Read Holding Registers 
+     * MODBUS Function 0x03 
+     * \param address  - Reference Address
+     * \param amount   - Amount of Registers to Read
+     * \param buffer   - Buffer to Store Data Read from Registers
+     */
     int readHoldingRegisters(uint16_t address, uitn16_t amount, uint16_t *buffer);
+
+    /*!
+     * Read Input Registers 
+     * MODBUS Function 0x04 
+     * \param address - Reference Address
+     * \param amount  - Amount of registers to read
+     * \param buffer  - Buffer to store Data Read from Registers
+     */
     int readInputRegisters(uint16_t address, uint16_t amount, uint16_t *buffer);
 
     int writeCoil(uint16_t address, const bool &to_write);
@@ -95,17 +111,17 @@ private:        // Methods
      * 
      * \return int 
      */
-    int         modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value);
+    int                 modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value);
     virtual ssize_t     modbusSend(uint8_t *to_send, size_t length) = 0;
     virtual ssize_t     modbusReceive(uint8_t *buffer) const = 0;
 
-    void        modbusErrorHandle(const uint8_t *msg, int function_code);
-    void        setBadConnection();
-    void        setBadInput();
+    void                modbusErrorHandle(const uint8_t *msg, int function_code);
+    void                setBadConnection();
+    void                setBadInput();
 
 private:        // Members (Giggity!)
-    bool        m_connected{};
-    uint32_t    m_msg_id{};
-    int         m_slaveId{};
+    bool                m_connected{};
+    uint32_t            m_msg_id{};
+    int                 m_slaveId{};
 
 };
