@@ -118,7 +118,7 @@ int ModbusBase::readInputRegisters(uint16_t address, uint16_t amount, uint16_t *
     if (m_connected)
     {
         modbusRead(address, amount, READ_INPUT_REGS);
-        uint8_t to_rec[MSG_MAX_LENGTH];
+        uint8_t to_rec[MAX_MSG_LENGTH];
         size_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -151,22 +151,116 @@ int ModbusBase::writeCoil(uint16_t address, const bool &to_write)
     if (m_connected)
     {
         int value = to_write * 0xFF00;
+        modbusWrite(address, 1, WRITE_COIL, (uint16_t *)&value);
+        uint8_t to_rec[MAX_MSG_LENGTH];
+        ssize_t result = modbusReceive(to_rec);
+        if (result == -1)
+        {
+            setBadConnection();
+            return BAD_CON;
+        }
+
+        modbusErrorHandle(to_rec, WRITE_COIL);
+        if (err)
+        {
+            return err_no;
+        }
+        return 0;
+    }
+    else
+    {
+        setBadConnection();
+        return BAD_CON;
     }
 }
 
 int ModbusBase::writeRegister(uint16_t address, const uint16_t &value)
 {
+    if (m_connected)
+    {
+        modbusWrite(address, 1, WRITE_REG, &value);
+        uint8_t to_rec[MAX_MSG_LENGTH];
+        ssize_t result = modebusReceive(to_rec);
+        if (result == -1)
+        {
+            setBadConnection();
+            return BAD_CON;
+        }
 
+        modbusErrorHandle(to_rec, WRITE_COIL);
+        if (err)
+        {
+            return err_no;
+        }
+        return 0;
+    }
+    else
+    {
+        setBadConnection();
+        return BAD_CON;
+    }
 }
 
 int ModbusBase::writeCoils(uint16_t address, uint16_t amount, const bool *value)
 {
+    if (m_connected)
+    {
+        uint16_t *temp = new uint16_t[amount];
+        for (int i = 0; i < amount; i++)
+        {
+            temp[i] = (uint16_t)value[i];
+        }
 
+        modbusWrite(address, amount, WRITE_COILS, temp);
+        delete[] temp;
+
+        uint8_t to_rec[MAX_MSG_LENGTH];
+        ssize_t result = modbusReceive(to_rec);
+        if (result == -1)
+        {
+            setBadConnection();
+            return BAD_CON;
+        }
+
+        modbusErrorHandle(to_rec, WRITE_COILS);
+        if (err)
+        {
+            return err_no;
+        }
+        return 0;
+    }
+    else
+    {
+        setBadConnection();
+        return BAD_CON;
+    }
 }
 
 int ModbusBase::writeRegisters(uint16_t address, uint16_t amount, const uint16_t *value)
 {
+    if (m_connected)
+    {
+        modbusWrite(address ,amount, WRITE_REGS, value);
+        uint8_t to_rec[MAX_MSG_LENGTH];
+        ssize_t result = modbusReceive(to_rec);
+        if (result == -1)
+        {
+            setBadConnection();
+            return BAD_CON;
+        }
 
+        modbusErrorHandle(to_rec, WRITE_COILS);
+        if (err)
+        {
+            return err_no;
+        }
+        return 0;
+    }
+    else
+    {
+        setBadConnection();
+        return BAD_CON;
+    }
 }
 
 void ModbusBase::buildRequest(uint8_t *to_send, uint16_t address, int function_code) const

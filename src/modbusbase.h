@@ -111,10 +111,30 @@ public:
      */
     int writeCoil(uint16_t address, const bool &to_write);
 
+    /*!
+     * Write Single Register
+     * MODBUS Function 0x06
+     * \param address - Reference Address
+     * \param value   - Value to Be Written to Register
+     */
     int writeRegister(uint16_t address, const uint16_t &value);
 
+    /*!
+     * Write Multiple Coils 
+     * MODBUS Function 0x0F 
+     * \param address - Reference Address
+     * \param amount  - Amount of coils to write
+     * \param value   - Values to Be Written to Coils
+     */
     int writeCoils(uint16_t address, uint16_t amount, const bool *value);
 
+    /*!
+     * Write Multiple Registers 
+     * MODBUS Function 0x10 
+     * \param address - Reference Address
+     * \param amount  - Amount of Value to Write
+     * \param value   - Values to Be Written to the Registers
+     */
     int writeRegisters(uint16_t address, uint16_t amount, const uint16_t *value);
 
 private:        // Methods
