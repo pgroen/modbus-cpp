@@ -7,6 +7,8 @@
 
 #include "modbusbase.h"
 
+using namespace osdev::components::modbus;
+
 int ModbusBase::readCoils(uint16_t address, uint16_t amount, bool *buffer)
 {
     if (m_connected)

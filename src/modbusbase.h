@@ -44,6 +44,10 @@
 
 #define BAD_CON             -1
 
+namespace osdev {
+namespace components {
+namespace modbus {
+
 // Modbus base class. Providing all Modbus PDUs without transport implementation
 class ModbusBase
 {
@@ -169,3 +173,8 @@ private:        // Members (Giggity!)
     int                 m_slaveId{};
 
 };
+
+}   // End namespace modbus
+}   // End namespace components
+}   // End namespace osdev
+
