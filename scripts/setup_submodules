@@ -1,0 +1,170 @@
+#!/bin/bash
+
+# ===============================================
+# == Setting some environment variables
+# ===============================================
+GIT_URL_OPEN="http://gitlab.osdev.nl/open_source"
+GIT_URL_CLOSED="git@gitlab.osdev.nl:closed_source"
+
+FUNC_RESULT="-1"
+
+# Name          : print_usage_exit()
+# Description   : Print the way this script is intended to be used and exit.
+# Parameters    : None.
+# Returns       : err_code 1 to the Operating System
+# --------------------------------------------------------------------------------------
+function print_usage_exit() 
+{
+    echo "Usage $0 -i|--install|-u|--update"
+    echo "	-i or --install  Install the submodules mentioned in the submodules.list" 
+    echo "	-u or --update   Update the submodules mentioned in the submodules.list"
+    echo " "
+    exit 1
+}
+
+# Name          : check_top_or_sub
+# Description   : Determine if we're running in a "single" lib-build or part of a
+#                 "meta"-repository ( submodule ). 
+# Parameters    : None
+# Returns       : Updates the value FUNC_RESULT.
+#                 -1 - We're neither a git-repo or submodule.
+#                  0 - We're a submodule
+#                  1 - We're a top-repo ( Single library )
+# --------------------------------------------------------------------------------------
+function check_top_or_sub() 
+{
+    # This function checks if we're the top-repository.
+    # In that case we need the submodules.. If we're already a submodule, 
+    # we simply exit this script with a message
+    if [ -e ./.git ]; then
+	    FUNC_RESULT="1"
+        return
+    elif [ -e ../.git ]; then
+        if [ -e ../.submodules ]; then
+            echo "Seems like we're already a submodule. Nothing to do here."
+            FUNC_RESULT="0"
+            return
+        fi
+    fi
+    FUNC_RESULT="-1"
+    return
+}
+
+# Name          : check_working_dir
+# Description   : If we're in the top of our repo, we can run this script further.
+# Parameters    : None.
+# Returns       : Updates the value FUNC_RESULT.
+#                 -1 - Not used.
+#                  0 - We're not on the top-level
+#                  1 - We're at the top-level. Good to go.
+# --------------------------------------------------------------------------------------
+function check_working_dir() 
+{
+    FUNC_RESULT="-1"
+    # Check if we're in the top-level directory of our repository.
+    if [ -f ./scripts/submodules.list ]; then
+        # We're good to go
+        FUNC_RESULT="1"
+        return
+    fi
+    FUNC_RESULT="0"
+    return
+}
+
+# Name          : read_submodules
+# Description   : Read the list of submodules needed for this project
+# Parameters    : None
+# Returns       : Updates the value FUNC_RESULT
+#                 0 - Module list was not found
+#                 1 - Module list was found and read.
+# --------------------------------------------------------------------------------------
+function read_submodules() 
+{
+    FUNC_RESULT="-1"
+    if [ -e ./scripts/submodules.list ]; then
+        source ./scripts/submodules.list
+        FUNC_RESULT="1"
+        return
+    fi
+
+    echo "Submodules list not found...."
+    FUNC_RESULT="0"
+    return
+}
+
+# Name          : add_submodules
+# Description   : Configure the repo to add the submodules.
+# Parameters    : None.
+# Returns       : None.
+# --------------------------------------------------------------------------------------
+function add_submodules() 
+{
+    echo -e "Adding SubModule(s)."
+    for SUB_MODULE in ${SUB_MODULES_OPEN}
+    do
+        git submodule add -f ${GIT_URL_OPEN}/${SUB_MODULE}.git submodules/${SUB_MODULE}
+        git config submodule.${SUB_MODULE}.url ${GIT_URL_OPEN}/${SUB_MODULE}.git
+    done
+    
+    for SUB_MODULE in ${SUB_MODULES_CLOSED}
+    do    
+        echo {GIT_URL_CLOSED}/${SUB_MODULE}.git
+        git submodule add -f ${GIT_URL_CLOSED}/${SUB_MODULE}.git submodules/${SUB_MODULE}
+        git config submodule.${SUB_MODULE}.url ${GIT_URL_CLOSED}/${SUB_MODULE}.git
+    done
+    
+}
+
+# Name          : get_submodules
+# Description   : Actually get the submodules from gitlab and add them.
+# Parameters    : None
+# Returns       : None
+# --------------------------------------------------------------------------------------
+function get_submodules() 
+{
+    git submodule update --init --recursive
+}
+
+# Name          : update_submodules
+# Description   : Update the submodules already added.
+# Parameters    : None 
+# Returns       : None
+# --------------------------------------------------------------------------------------
+function update_submodules() 
+{
+    git submodule update --recursive
+}
+
+# =============================================================================
+# ==        T H E   M A I N   E N T R Y   O F   T H I S   S C R I P T        ==
+# =============================================================================
+check_top_or_sub
+if [ "${FUNC_RESULT}" == "0" ]; then
+    echo "Seems like we're a submodule already or not part of a repository."
+    exit 0
+fi
+
+check_working_dir
+if [ "${FUNC_RESULT}" == "0" ]; then
+    echo "Go to the top of this repository and type : scripts/setup_submodules [-i|--install]"
+    exit 0
+fi
+
+read_submodules
+
+case "$1" in
+    -i*|--install*)
+        echo "Installing submodules for this repository ( ${PWD} )"
+        add_submodules
+        get_submodules
+        ;;
+    -u*|--update*)
+        echo "Update submodules : ${SUB_MODULES}"
+        update_submodules
+        ;;
+    *)
+        echo "No parameters found..."
+        print_usage_exit
+        ;;
+esac        
+

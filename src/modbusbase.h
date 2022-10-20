@@ -149,7 +149,9 @@ private:        // Methods
      * \param function_code - Modbus Functional Code
      */
     void        buildRequest(uint8_t *to_send, uint16_t address, int function_code) const;
+
     int         modbusRead(uint16_t address, uint16_t amount, int function_code);
+
     /*!
      * Write Request Builder and Sender
      * \param address       - Reference address
@@ -160,11 +162,15 @@ private:        // Methods
      * \return int 
      */
     int                 modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value);
+
     virtual ssize_t     modbusSend(uint8_t *to_send, size_t length) = 0;
+
     virtual ssize_t     modbusReceive(uint8_t *buffer) const = 0;
 
     void                modbusErrorHandle(const uint8_t *msg, int function_code);
+
     void                setBadConnection();
+
     void                setBadInput();
 
 private:        // Members (Giggity!)
