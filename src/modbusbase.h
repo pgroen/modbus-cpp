@@ -4,8 +4,9 @@
  *  This source code is licensed under the MIT license found in the
  *  LICENSE file in the root directory of this source tree.
  */
-
 #pragma once
+
+#include <string>
 
 // Create a simple logger for console output during debugging.
 // TODO: Replace with a custom logger by using std::function
@@ -17,7 +18,8 @@
 #define LOG(...) (void)0
 #endif
 
-#define MAX_MSG_LENGTH 260
+#define MAX_MSG_LENGTH_TCP  260
+#define MAX_MSG_LENGTH_RTU  252
 
 // Function Codes
 #define READ_COILS          0x01
@@ -68,7 +70,7 @@ public:
     // Pure virtuals. Override when inherited.
     virtual bool Connect() const = 0;
     virtual void Close() = 0;
-    virtual bool isConnected() const - 0;
+    virtual bool isConnected() const = 0;
     
     // Modbus implementation(s)
     /*!
@@ -96,7 +98,7 @@ public:
      * \param amount   - Amount of Registers to Read
      * \param buffer   - Buffer to Store Data Read from Registers
      */
-    int readHoldingRegisters(uint16_t address, uitn16_t amount, uint16_t *buffer);
+    int readHoldingRegisters(uint16_t address, uint16_t amount, uint16_t *buffer);
 
     /*!
      * Read Input Registers 
@@ -159,18 +161,40 @@ private:        // Methods
      * \param function_code - Modbus Functional Code
      * \param value         - Data to be written
      * 
-     * \return int 
+     * \return int          -
      */
     int                 modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value);
 
+    /*!
+     * \brief modbusSend
+     * \param to_send
+     * \param length
+     * \return
+     */
     virtual ssize_t     modbusSend(uint8_t *to_send, size_t length) = 0;
 
+    /*!
+     * \brief modbusReceive
+     * \param buffer
+     * \return
+     */
     virtual ssize_t     modbusReceive(uint8_t *buffer) const = 0;
 
+    /*!
+     * \brief modbusErrorHandle
+     * \param msg
+     * \param function_code
+     */
     void                modbusErrorHandle(const uint8_t *msg, int function_code);
 
+    /*!
+     * \brief setBadConnection
+     */
     void                setBadConnection();
 
+    /*!
+     * \brief setBadInput
+     */
     void                setBadInput();
 
 private:        // Members (Giggity!)

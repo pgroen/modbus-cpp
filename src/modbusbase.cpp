@@ -36,7 +36,7 @@ int ModbusBase::readCoils(uint16_t address, uint16_t amount, bool *buffer)
 
         for (auto i = 0; i < amount; i++)
         {
-            buffer[i] = (bool)((to_rec[9u + i / 8u] >> (i % 8u)) & 1u);
+            buffer[i] = static_cast<bool>((to_rec[9u + i / 8u] >> (i % 8u)) & 1u);
         }
         return 0;
     }
@@ -73,7 +73,7 @@ int ModbusBase::readInputBits(uint16_t address, uint16_t amount, bool *buffer)
 
         for (auto i = 0; i < amount; i++)
         {
-            buffer[i] = (bool)((to_rec[9u + i / 8u] >> (i % 8u)) & 1u);
+            buffer[i] = static_cast<bool>((to_rec[9u + i / 8u] >> (i % 8u)) & 1u);
         }
         modbusErrorHandle(to_rec, READ_INPUT_BITS);
         return 0;
@@ -84,7 +84,7 @@ int ModbusBase::readInputBits(uint16_t address, uint16_t amount, bool *buffer)
     }
 }
 
-int ModbusBase::readHoldingRegisters(uint16_t address, uitn16_t amount, uint16_t *buffer)
+int ModbusBase::readHoldingRegisters(uint16_t address, uint16_t amount, uint16_t *buffer)
 {
     if (m_connected)
     {
@@ -103,8 +103,8 @@ int ModbusBase::readHoldingRegisters(uint16_t address, uitn16_t amount, uint16_t
         }
         for (auto i = 0; i < amount; i++)
         {
-            buffer[i] = ((uint16_t)to_rec[9u + 2u * i]) << 8u;
-            buffer[i] += (uint16_t)to_rec[10u + 2u * i];
+            buffer[i] = (static_cast<uint16_t>(to_rec[9u + 2u * i])) << 8u;
+            buffer[i] += static_cast<uint16_t>(to_rec[10u + 2u * i]);
         }
         return 0;
     }
@@ -121,7 +121,7 @@ int ModbusBase::readInputRegisters(uint16_t address, uint16_t amount, uint16_t *
     {
         modbusRead(address, amount, READ_INPUT_REGS);
         uint8_t to_rec[MAX_MSG_LENGTH];
-        size_t result = modbusReceive(to_rec);
+        ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
             setBadConnection();
@@ -136,8 +136,8 @@ int ModbusBase::readInputRegisters(uint16_t address, uint16_t amount, uint16_t *
 
         for (auto i = 0; i < amount; i++)
         {
-            buffer[i] = ((uint16_t)to_rec[9u + 2u * i]) << 8u;
-            buffer[i] = (uint16_t)to_rec[10u + 2u * i];
+            buffer[i] = (static_cast<uint16_t>(to_rec[9u + 2u * i])) << 8u;
+            buffer[i] = static_cast<uint16_t>(to_rec[10u + 2u * i]);
         }
         return 0;
     }
@@ -153,7 +153,7 @@ int ModbusBase::writeCoil(uint16_t address, const bool &to_write)
     if (m_connected)
     {
         int value = to_write * 0xFF00;
-        modbusWrite(address, 1, WRITE_COIL, (uint16_t *)&value);
+        modbusWrite(address, 1, WRITE_COIL, reinterpret_cast<uint16_t *>(&value));
         uint8_t to_rec[MAX_MSG_LENGTH];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
@@ -182,7 +182,7 @@ int ModbusBase::writeRegister(uint16_t address, const uint16_t &value)
     {
         modbusWrite(address, 1, WRITE_REG, &value);
         uint8_t to_rec[MAX_MSG_LENGTH];
-        ssize_t result = modebusReceive(to_rec);
+        ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
             setBadConnection();
@@ -210,7 +210,7 @@ int ModbusBase::writeCoils(uint16_t address, uint16_t amount, const bool *value)
         uint16_t *temp = new uint16_t[amount];
         for (int i = 0; i < amount; i++)
         {
-            temp[i] = (uint16_t)value[i];
+            temp[i] = static_cast<uint16_t>(value[i]);
         }
 
         modbusWrite(address, amount, WRITE_COILS, temp);
@@ -267,15 +267,15 @@ int ModbusBase::writeRegisters(uint16_t address, uint16_t amount, const uint16_t
 
 void ModbusBase::buildRequest(uint8_t *to_send, uint16_t address, int function_code) const
 {
-    to_send[0] = (uint8_t)(m_msg_id >> 8u);
-    to_send[1] = (uint8_t)(m_msg_id & 0x00FFu);
+    to_send[0] = static_cast<uint8_t>(m_msg_id >> 8u);
+    to_send[1] = static_cast<uint8_t>(m_msg_id & 0x00FFu);
     to_send[2] = 0;
     to_send[3] = 0;
     to_send[4] = 0;
-    to_send[6] = (uint8_t)m_slaveId;
-    to_send[7] = (uint8_t)function_code;
-    to_send[8] = (uint8_t)(address >> 8u);
-    to_send[9] = (uint8_t)(address & 0x00FFu);
+    to_send[6] = static_cast<uint8_t>(m_slaveId);
+    to_send[7] = static_cast<uint8_t>(function_code);
+    to_send[8] = static_cast<uint8_t>(address >> 8u);
+    to_send[9] = static_cast<uint8_t>(address & 0x00FFu);
 }
 
 int ModbusBase::modbusRead(uint16_t address, uint16_t amount, int function_code)
@@ -286,8 +286,8 @@ int ModbusBase::modbusRead(uint16_t address, uint16_t amount, int function_code)
     uint8_t to_send[12];
     buildRequest(to_send, address, function_code);
     to_send[5] = 6;
-    to_send[10] = (uint8_t)(amount >> 8u);
-    to_send[11] = (uint8_t)(amount & 0x00FFu);
+    to_send[10] = static_cast<uint8_t>(amount >> 8u);
+    to_send[11] = static_cast<uint8_t>(amount & 0x00FFu);
     return modbusSend(to_send, 12);
 }
 
@@ -308,8 +308,8 @@ int ModbusBase::modbusWrite(uint16_t address, uint16_t amount, int function_code
             to_send = new uint8_t[12];
             buildRequest(to_send, address, function_code);
             to_send[5] = 6;
-            to_send[10] = (uint8_t)(value[0] >> 8u);
-            to_send[11] = (uint8_t)(value[0] & 0x00FFu);
+            to_send[10] = static_cast<uint8_t>(value[0] >> 8u);
+            to_send[11] = static_cast<uint8_t>(value[0] & 0x00FFu);
             status = modbusSend(to_send, 12);
             break;
         }
@@ -317,14 +317,14 @@ int ModbusBase::modbusWrite(uint16_t address, uint16_t amount, int function_code
         {
             to_send = new uint8_t[13 + 2 * amount];
             buildRequest(to_send, address, function_code);
-            to_send[5] = (uint8_t)(7 + 2 * amount);
-            to_send[10] = (uint8_t)(amount >> 8u);
-            to_send[11] = (uint8_t)(amount & 0x00FFu);
-            to_send[12] = (uint8_t)(2 * amount);
+            to_send[5] = static_cast<uint8_t>(7 + 2 * amount);
+            to_send[10] = static_cast<uint8_t>(amount >> 8u);
+            to_send[11] = static_cast<uint8_t>(amount & 0x00FFu);
+            to_send[12] = static_cast<uint8_t>(2 * amount);
             for (int i = 0; i < amount; i++)
             {
-                to_send[13 + 2 * i] = (uint8_t)(value[i] >> 8u);
-                to_send[14 + 2 * i] = (uint8_t)(value[i] & 0x00FFu);
+                to_send[13 + 2 * i] = static_cast<uint8_t>(value[i] >> 8u);
+                to_send[14 + 2 * i] = static_cast<uint8_t>(value[i] & 0x00FFu);
             }
             status = modbusSend(to_send, 13 + 2 * amount);
             break;
@@ -333,17 +333,17 @@ int ModbusBase::modbusWrite(uint16_t address, uint16_t amount, int function_code
         {
             to_send = new uint8_t[14 + ( amount - 1 ) / 8];
             buildRequest(to_send, address, function_code);
-            to_send[5] = (uint8_t)(7 + ( amount + 7 ) / 8);
-            to_send[10] = (uint8_t)(amount >> 8u);
-            to_send[11] = (uint8_t)(amount & 0x00FFu);
-            to_send[12] = (uint8_t)((amount + 7) / 8);
+            to_send[5] = static_cast<uint8_t>(7 + ( amount + 7 ) / 8);
+            to_send[10] = static_cast<uint8_t>(amount >> 8u);
+            to_send[11] = static_cast<uint8_t>(amount & 0x00FFu);
+            to_send[12] = static_cast<uint8_t>((amount + 7) / 8);
             for (int i = 0; i < (amount + 7) / 8; i++)
             {
-                to_send[13 + i] = 0     // Init needed before summing.
+                to_send[13 + i] = 0;     // Init needed before summing.
             }
             for (int i = 0; i < amount; i++)
             {
-                to_send[13 + i / 8] += (uint8_t)(value[i] << (i % 8u));
+                to_send[13 + i / 8] += static_cast<uint8_t>(value[i] << (i % 8u));
             }
             status = modbusSend(to_send, 13 + (amount - 1) / 8);
         }
@@ -354,17 +354,23 @@ int ModbusBase::modbusWrite(uint16_t address, uint16_t amount, int function_code
 
 ssize_t ModbusBase::modbusSend(uint8_t *to_send, size_t length)
 {
+    (void)to_send;
+    (void)length;
 
+    return 0;
 }
 
 ssize_t ModbusBase::modbusReceive(uint8_t *buffer) const
 {
+    (void)buffer;
 
+    return 0;
 }
 
 void ModbusBase::modbusErrorHandle(const uint8_t *msg, int function_code)
 {
-
+    (void)msg;
+    (void)function_code;
 }
 
 void ModbusBase::setBadConnection()
