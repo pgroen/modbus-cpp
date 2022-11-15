@@ -50,20 +50,18 @@ bool ModbusTCP::Connect()
 
 void ModbusTCP::Close()
 {
-
-}
-
-bool ModbusTCP::isConnected() const
-{
-
+    X_CLOSE_SOCKET(m_socket);
 }
 
 ssize_t ModbusTCP::modbusSend(uint8_t *to_send, size_t length)
 {
+    uint32_t message_id = getMessageId();
+    setMessageId(message_id++);
 
+    return send(m_socket, reinterpret_cast<const char *>(to_send), static_cast<size_t>(length), 0);
 }
 
 ssize_t ModbusTCP::modbusReceive(uint8_t *buffer) const
 {
-
+    return recv(m_socket, reinterpret_cast<char *>(buffer), getMaxMessageLength(), 0);
 }

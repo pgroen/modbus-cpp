@@ -20,7 +20,7 @@ int ModbusBase::readCoils(uint16_t address, uint16_t amount, bool *buffer)
         }
 
         modbusRead(address, amount, READ_COILS);
-        uint8_t to_rec[MAX_MSG_LENGTH];
+        uint8_t to_rec[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -29,9 +29,9 @@ int ModbusBase::readCoils(uint16_t address, uint16_t amount, bool *buffer)
         }
 
         modbusErrorHandle(to_rec, READ_COILS);
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
 
         for (auto i = 0; i < amount; i++)
@@ -58,7 +58,7 @@ int ModbusBase::readInputBits(uint16_t address, uint16_t amount, bool *buffer)
         }
 
         modbusRead(address, amount, READ_INPUT_BITS);
-        uint8_t to_rec[MAX_MSG_LENGTH];
+        uint8_t to_rec[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -66,9 +66,9 @@ int ModbusBase::readInputBits(uint16_t address, uint16_t amount, bool *buffer)
             return BAD_CON;
         }
 
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
 
         for (auto i = 0; i < amount; i++)
@@ -89,7 +89,7 @@ int ModbusBase::readHoldingRegisters(uint16_t address, uint16_t amount, uint16_t
     if (m_connected)
     {
         modbusRead(address, amount, READ_REGS);
-        uint8_t to_rec[MAX_MSG_LENGTH];         // <-- Transport layer dependent .. ?
+        uint8_t to_rec[m_max_message_length];         // <-- Transport layer dependent .. ?
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -97,9 +97,9 @@ int ModbusBase::readHoldingRegisters(uint16_t address, uint16_t amount, uint16_t
             return BAD_CON;
         }
         modbusErrorHandle(to_rec, READ_REGS);
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
         for (auto i = 0; i < amount; i++)
         {
@@ -120,7 +120,7 @@ int ModbusBase::readInputRegisters(uint16_t address, uint16_t amount, uint16_t *
     if (m_connected)
     {
         modbusRead(address, amount, READ_INPUT_REGS);
-        uint8_t to_rec[MAX_MSG_LENGTH];
+        uint8_t to_rec[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -129,9 +129,9 @@ int ModbusBase::readInputRegisters(uint16_t address, uint16_t amount, uint16_t *
         }
 
         modbusErrorHandle(to_rec, READ_INPUT_REGS);
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
 
         for (auto i = 0; i < amount; i++)
@@ -154,7 +154,7 @@ int ModbusBase::writeCoil(uint16_t address, const bool &to_write)
     {
         int value = to_write * 0xFF00;
         modbusWrite(address, 1, WRITE_COIL, reinterpret_cast<uint16_t *>(&value));
-        uint8_t to_rec[MAX_MSG_LENGTH];
+        uint8_t to_rec[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -163,9 +163,9 @@ int ModbusBase::writeCoil(uint16_t address, const bool &to_write)
         }
 
         modbusErrorHandle(to_rec, WRITE_COIL);
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
         return 0;
     }
@@ -181,7 +181,7 @@ int ModbusBase::writeRegister(uint16_t address, const uint16_t &value)
     if (m_connected)
     {
         modbusWrite(address, 1, WRITE_REG, &value);
-        uint8_t to_rec[MAX_MSG_LENGTH];
+        uint8_t to_rec[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -190,9 +190,9 @@ int ModbusBase::writeRegister(uint16_t address, const uint16_t &value)
         }
 
         modbusErrorHandle(to_rec, WRITE_COIL);
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
         return 0;
     }
@@ -216,7 +216,7 @@ int ModbusBase::writeCoils(uint16_t address, uint16_t amount, const bool *value)
         modbusWrite(address, amount, WRITE_COILS, temp);
         delete[] temp;
 
-        uint8_t to_rec[MAX_MSG_LENGTH];
+        uint8_t to_rec[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -225,9 +225,9 @@ int ModbusBase::writeCoils(uint16_t address, uint16_t amount, const bool *value)
         }
 
         modbusErrorHandle(to_rec, WRITE_COILS);
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
         return 0;
     }
@@ -252,9 +252,9 @@ int ModbusBase::writeRegisters(uint16_t address, uint16_t amount, const uint16_t
         }
 
         modbusErrorHandle(to_rec, WRITE_COILS);
-        if (err)
+        if (m_error)
         {
-            return err_no;
+            return m_error_number;
         }
         return 0;
     }

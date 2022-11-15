@@ -20,9 +20,6 @@
 #define LOG(...) (void)0
 #endif
 
-#define MAX_MSG_LENGTH_TCP  260
-#define MAX_MSG_LENGTH_RTU  252
-
 // Function Codes
 #define READ_COILS          0x01
 #define READ_INPUT_BITS     0x02
@@ -150,6 +147,8 @@ public:
     bool                getError() const { return m_error; }
     int                 getErrorNumber() const { return m_error_number; }
     std::string         getErrorMessage() const { return m_error_message;}
+    void                setMaxMessageLength(unsigned int max_message_length) { m_max_message_length = max_message_length; }
+    unsigned int        getMaxMessageLength() const { return m_max_message_length; }
 
 private:        // Methods
     /*!
@@ -212,6 +211,7 @@ private:        // Members (Giggity!)
     bool                m_error{};
     int                 m_error_number{};
     std::string         m_error_message;
+    unsigned int        m_max_message_length;
 
 };
 
