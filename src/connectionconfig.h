@@ -13,7 +13,7 @@ namespace modbus {
 class ConnectionConfig
 {
 public:
-    ConnectionConfig
+    ConnectionConfig();
 };
 
 }   // End namespace modbus

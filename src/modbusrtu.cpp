@@ -12,3 +12,23 @@ ModbusRTU::ModbusRTU()
 {
 
 }
+
+bool ModbusRTU::Connect()
+{
+
+}
+
+void ModbusRTU::Close()
+{
+
+}
+
+ssize_t ModbusRTU::modbusSend(uint8_t *to_send, size_t length)
+{
+
+}
+
+ssize_t ModbusRTU::modbusReceive(uint8_t *buffer) const
+{
+
+}

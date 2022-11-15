@@ -16,6 +16,34 @@ class ModbusRTU : public ModbusBase
 {
 public:
     ModbusRTU();
+
+    // Pure virtuals. Override when inherited.
+    /*!
+     * \brief Connect
+     * \return
+     */
+    virtual bool Connect() override;
+
+    /*!
+     * \brief Close
+     */
+    virtual void Close() override;
+
+private:
+    /*!
+     * \brief modbusSend
+     * \param to_send
+     * \param length
+     * \return
+     */
+    virtual ssize_t modbusSend(uint8_t *to_send, size_t length) override;
+
+    /*!
+     * \brief modbusReceive
+     * \param buffer
+     * \return
+     */
+    virtual ssize_t modbusReceive(uint8_t *buffer) const override;
 };
 
 }   // End namespace modbus

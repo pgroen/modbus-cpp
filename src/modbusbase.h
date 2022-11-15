@@ -6,7 +6,9 @@
  */
 #pragma once
 
+#include <cstring>
 #include <string>
+#include <stdint.h>
 
 // Create a simple logger for console output during debugging.
 // TODO: Replace with a custom logger by using std::function
@@ -54,23 +56,12 @@ namespace modbus {
 class ModbusBase
 {
 public:
-    bool            err{};
-    int             err_no{};
-    std::string     m_error_msg;
-    
     ModbusBase();
     virtual ~ModbusBase();
 
-    /*! 
-     * Set slave id for this context 
-     * \param slave_id - The slave id this system is known under.
-     */
-    void    setSlaveId(int slave_id) { m_slaveId = slave_id; }
-
     // Pure virtuals. Override when inherited.
-    virtual bool Connect() const = 0;
+    virtual bool Connect() = 0;
     virtual void Close() = 0;
-    virtual bool isConnected() const = 0;
     
     // Modbus implementation(s)
     /*!
@@ -143,6 +134,23 @@ public:
      */
     int writeRegisters(uint16_t address, uint16_t amount, const uint16_t *value);
 
+    // Getters and Setters.
+    void                setConnected(bool connected = false){ m_connected = connected;}
+    bool                getConnected() const { return m_connected; }
+    void                setMessageId( uint32_t message_id ) { m_msg_id = message_id; }
+    uint32_t            getMessageId() const { return m_msg_id; }
+    void                setSlaveId(int slave_id){ m_slaveId = slave_id; }
+    int                 getSlaveId() const { return m_slaveId; }
+    void                setError(bool error, int error_number = 0, const std::string &error_message = std::string())
+    {
+        m_error = error;
+        m_error_number = error_number;
+        m_error_message = error_message;
+    }
+    bool                getError() const { return m_error; }
+    int                 getErrorNumber() const { return m_error_number; }
+    std::string         getErrorMessage() const { return m_error_message;}
+
 private:        // Methods
     /*!
      * Modbus Request Builder
@@ -201,6 +209,9 @@ private:        // Members (Giggity!)
     bool                m_connected{};
     uint32_t            m_msg_id{};
     int                 m_slaveId{};
+    bool                m_error{};
+    int                 m_error_number{};
+    std::string         m_error_message;
 
 };
 
