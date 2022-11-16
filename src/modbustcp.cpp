@@ -10,7 +10,7 @@ using namespace osdev::components::modbus;
 
 ModbusTCP::ModbusTCP(const ConnectionConfig &port_configuration)
 {
-
+    setMaxMessageLength(260);   // Maximum Messagelength over TCP
 }
 
 bool ModbusTCP::Connect()

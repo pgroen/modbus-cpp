@@ -26,6 +26,9 @@ using SOCKADDR_IN = struct sockaddr_in;
 #define X_CLOSE_SOCKET(s) close(s)
 #define X_ISCONNECTSUCCEED(s) ((s) >= 0)
 
+/*!
+ * \brief The ModbusTCP class
+ */
 class ModbusTCP : public ModbusBase
 {
 public:
@@ -65,7 +68,7 @@ private:    // Methods
 
 private:    // Members
     uint16_t    m_port {};
-    std::string m_host;
+    std::string m_host{};
     X_SOCKET    m_socket{};
     SOCKADDR_IN m_server{};
 };

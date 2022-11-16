@@ -20,7 +20,7 @@ int ModbusBase::readCoils(uint16_t address, uint16_t amount, bool *buffer)
         }
 
         modbusRead(address, amount, READ_COILS);
-        uint8_t to_rec[m_max_message_length];
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -58,7 +58,7 @@ int ModbusBase::readInputBits(uint16_t address, uint16_t amount, bool *buffer)
         }
 
         modbusRead(address, amount, READ_INPUT_BITS);
-        uint8_t to_rec[m_max_message_length];
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -89,7 +89,7 @@ int ModbusBase::readHoldingRegisters(uint16_t address, uint16_t amount, uint16_t
     if (m_connected)
     {
         modbusRead(address, amount, READ_REGS);
-        uint8_t to_rec[m_max_message_length];         // <-- Transport layer dependent .. ?
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -120,7 +120,7 @@ int ModbusBase::readInputRegisters(uint16_t address, uint16_t amount, uint16_t *
     if (m_connected)
     {
         modbusRead(address, amount, READ_INPUT_REGS);
-        uint8_t to_rec[m_max_message_length];
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -154,7 +154,7 @@ int ModbusBase::writeCoil(uint16_t address, const bool &to_write)
     {
         int value = to_write * 0xFF00;
         modbusWrite(address, 1, WRITE_COIL, reinterpret_cast<uint16_t *>(&value));
-        uint8_t to_rec[m_max_message_length];
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -181,7 +181,7 @@ int ModbusBase::writeRegister(uint16_t address, const uint16_t &value)
     if (m_connected)
     {
         modbusWrite(address, 1, WRITE_REG, &value);
-        uint8_t to_rec[m_max_message_length];
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -216,7 +216,7 @@ int ModbusBase::writeCoils(uint16_t address, uint16_t amount, const bool *value)
         modbusWrite(address, amount, WRITE_COILS, temp);
         delete[] temp;
 
-        uint8_t to_rec[m_max_message_length];
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
@@ -243,7 +243,7 @@ int ModbusBase::writeRegisters(uint16_t address, uint16_t amount, const uint16_t
     if (m_connected)
     {
         modbusWrite(address ,amount, WRITE_REGS, value);
-        uint8_t to_rec[MAX_MSG_LENGTH];
+        uint8_t *to_rec = new uint8_t[m_max_message_length];
         ssize_t result = modbusReceive(to_rec);
         if (result == -1)
         {
