@@ -6,13 +6,14 @@ project_header(modbus-cpp)
 
 include(compiler)
 
+include_directories(
+    ${CMAKE_SOURCE_DIR}/include
+)
+
 set(SRC_LIST
-    ${CMAKE_CURRENT_SOURCE_DIR}/modbusbase.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/modbusbase.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/modbustcp.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/modbustcp.cpp
-    #${CMAKE_CURRENT_SOURCE_DIR}/modbusrtu.h
-    #${CMAKE_CURRENT_SOURCE_DIR}/modbusrtu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/imodbusport.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/modbus.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/modbus.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/connectionconfig.h
     ${CMAKE_CURRENT_SOURCE_DIR}/connectionconfig.cpp
 )

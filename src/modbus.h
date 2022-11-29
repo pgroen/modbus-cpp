@@ -50,11 +50,11 @@ namespace components {
 namespace modbus {
 
 // Modbus base class. Providing all Modbus PDUs without transport implementation
-class ModbusBase
+class Modbus
 {
 public:
-    ModbusBase();
-    virtual ~ModbusBase();
+    Modbus();
+    virtual ~Modbus();
 
     // Pure virtuals. Override when inherited.
     virtual bool Connect() = 0;

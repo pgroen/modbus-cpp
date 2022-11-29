@@ -5,7 +5,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include "modbusbase.h"
+#include "modbus.h"
 
 using namespace osdev::components::modbus;
 
