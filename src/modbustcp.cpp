@@ -9,6 +9,7 @@
 using namespace osdev::components::modbus;
 
 ModbusTcp::ModbusTcp(const ConnectionConfig &con_config)
+
 {
 
 }

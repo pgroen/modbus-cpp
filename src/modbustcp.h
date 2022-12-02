@@ -8,9 +8,18 @@
 
 #include "imodbusport.h"
 
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 namespace osdev {
 namespace components {
 namespace modbus {
+
+using X_SOCKET = int;
+using SOCKADDR = struct sockaddr;
+using SOCKADDR_IN = struct sockaddr_in;
 
 class ModbusTcp : public IModbusPort
 {
@@ -24,6 +33,13 @@ public:
     virtual bool Close() const override;
     virtual int Read(uint8_t *buffer) const override;
     virtual int Write(uint8_t *buffer, size_t length) const override;
+
+private:
+    uint16_t        m_port {502};
+    std::string     m_host {};
+    X_SOCKET        m_socket {-1};
+    SOCKADDR_IN     m_server {};
+
 };
 
 }   /* End namespace modbus */
