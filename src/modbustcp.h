@@ -6,7 +6,8 @@
  */
 #pragma once
 
-#include "imodbusport.h"
+#include "modbusbase.h"
+#include "connectionconfig.h"
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -21,18 +22,29 @@ using X_SOCKET = int;
 using SOCKADDR = struct sockaddr;
 using SOCKADDR_IN = struct sockaddr_in;
 
-class ModbusTcp : public IModbusPort
+class ModbusTcp : public ModbusBase
 {
 public:
     explicit ModbusTcp(const ConnectionConfig &con_config);
     virtual ~ModbusTcp() {}
 
-    // The standard device interface.
-    // Implementation of IModbusPort
-    virtual bool Open() const override;
-    virtual bool Close() const override;
-    virtual int Read(uint8_t *buffer) const override;
-    virtual int Write(uint8_t *buffer, size_t length) const override;
+    virtual bool Connect() override;
+    virtual bool Close() override;
+
+    /*!
+     * \brief modbusSend
+     * \param to_send
+     * \param length
+     * \return
+     */
+    virtual ssize_t mmodbusSend(uint8_t *to_send, size_t length) override;
+
+    /*!
+     * \brief modbusReceive
+     * \param buffer
+     * \return
+     */
+    virtual ssize_t modbusReceive(uint8_t *buffer) const override;
 
 private:
     uint16_t        m_port {502};

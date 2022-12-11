@@ -5,7 +5,7 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
-#include "modbus.h"
+#include "modbusbase.h"
 
 using namespace osdev::components::modbus;
 
@@ -350,21 +350,6 @@ int ModbusBase::modbusWrite(uint16_t address, uint16_t amount, int function_code
     }
     delete[] to_send;
     return status;
-}
-
-ssize_t ModbusBase::modbusSend(uint8_t *to_send, size_t length)
-{
-    (void)to_send;
-    (void)length;
-
-    return 0;
-}
-
-ssize_t ModbusBase::modbusReceive(uint8_t *buffer) const
-{
-    (void)buffer;
-
-    return 0;
 }
 
 void ModbusBase::modbusErrorHandle(const uint8_t *msg, int function_code)

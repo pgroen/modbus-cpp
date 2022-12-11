@@ -50,15 +50,30 @@ namespace components {
 namespace modbus {
 
 // Modbus base class. Providing all Modbus PDUs without transport implementation
-class Modbus
+class ModbusBase
 {
 public:
-    Modbus();
-    virtual ~Modbus();
+    ModbusBase();
+    virtual ~ModbusBase();
 
     // Pure virtuals. Override when inherited.
     virtual bool Connect() = 0;
-    virtual void Close() = 0;
+    virtual bool Close() = 0;
+
+    /*!
+     * \brief modbusSend
+     * \param to_send
+     * \param length
+     * \return
+     */
+    virtual ssize_t     modbusSend(uint8_t *to_send, size_t length) = 0;
+
+    /*!
+     * \brief modbusReceive
+     * \param buffer
+     * \return
+     */
+    virtual ssize_t     modbusReceive(uint8_t *buffer) = 0;
     
     // Modbus implementation(s)
     /*!
@@ -171,21 +186,6 @@ private:        // Methods
      * \return int          -
      */
     int                 modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value);
-
-    /*!
-     * \brief modbusSend
-     * \param to_send
-     * \param length
-     * \return
-     */
-    virtual ssize_t     modbusSend(uint8_t *to_send, size_t length) = 0;
-
-    /*!
-     * \brief modbusReceive
-     * \param buffer
-     * \return
-     */
-    virtual ssize_t     modbusReceive(uint8_t *buffer) const = 0;
 
     /*!
      * \brief modbusErrorHandle
