@@ -66,14 +66,14 @@ public:
      * \param length
      * \return
      */
-    virtual ssize_t     modbusSend(uint8_t *to_send, size_t length) = 0;
+    virtual int modbusSend(uint8_t *to_send, size_t length) = 0;
 
     /*!
      * \brief modbusReceive
      * \param buffer
      * \return
      */
-    virtual ssize_t     modbusReceive(uint8_t *buffer) = 0;
+    virtual int modbusReceive(uint8_t *buffer) = 0;
     
     // Modbus implementation(s)
     /*!

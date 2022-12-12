@@ -14,22 +14,22 @@ ModbusTcp::ModbusTcp(const ConnectionConfig &con_config)
 
 }
 
-bool ModbusTcp::Open() const
+bool ModbusTcp::Connect()
 {
 
 }
 
-bool ModbusTcp::Close() const
+bool ModbusTcp::Close()
 {
 
 }
 
-int ModbusTcp::Read(uint8_t *buffer) const
+int ModbusTcp::modbusReceive(uint8_t *buffer)
 {
-
+    return 0;
 }
 
-int ModbusTcp::Write(uint8_t *buffer, size_t length) const
+int ModbusTcp::modbusSend(uint8_t *buffer, size_t length)
 {
-
+    return 0;
 }

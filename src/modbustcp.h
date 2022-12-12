@@ -37,14 +37,14 @@ public:
      * \param length
      * \return
      */
-    virtual ssize_t mmodbusSend(uint8_t *to_send, size_t length) override;
+    virtual int modbusSend(uint8_t *to_send, size_t length) override;
 
     /*!
      * \brief modbusReceive
      * \param buffer
      * \return
      */
-    virtual ssize_t modbusReceive(uint8_t *buffer) const override;
+    virtual int modbusReceive(uint8_t *buffer) override;
 
 private:
     uint16_t        m_port {502};
