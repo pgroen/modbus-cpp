@@ -22,6 +22,8 @@ using X_SOCKET = int;
 using SOCKADDR = struct sockaddr;
 using SOCKADDR_IN = struct sockaddr_in;
 
+#define MAX_MSG_LENGTH 260
+
 class ModbusTcp : public ModbusBase
 {
 public:
@@ -47,8 +49,8 @@ public:
     virtual int modbusReceive(uint8_t *buffer) override;
 
 private:
-    uint16_t        m_port {502};
     std::string     m_host {};
+    uint16_t        m_port {502};
     X_SOCKET        m_socket {-1};
     SOCKADDR_IN     m_server {};
 

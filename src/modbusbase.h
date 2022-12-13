@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2022 Peter M. Groen
- *  
+ *
  *  This source code is licensed under the MIT license found in the
  *  LICENSE file in the root directory of this source tree.
  */
@@ -19,6 +19,10 @@
 #else
 #define LOG(...) (void)0
 #endif
+
+#define X_ISVALIDSOCKET(s) ((s) >= 0)
+#define X_CLOSE_SOCKET(s) close(s)
+#define X_ISCONNECTSUCCEED(s) ((s) >= 0)
 
 // Function Codes
 #define READ_COILS          0x01
@@ -74,11 +78,11 @@ public:
      * \return
      */
     virtual int modbusReceive(uint8_t *buffer) = 0;
-    
+
     // Modbus implementation(s)
     /*!
-     * Read Coils 
-     * MODBUS Function 0x01 
+     * Read Coils
+     * MODBUS Function 0x01
      * \param address - Reference Address
      * \param amount  - Amount of Coils to Read
      * \param buffer  - Buffer to Store Data Read from Coils
@@ -86,8 +90,8 @@ public:
     int readCoils(uint16_t address, uint16_t amount, bool *buffer);     // Replace buffer with something sensible?
 
     /*!
-     * Read Input Bits 
-     * MODBUS Function 0x02 
+     * Read Input Bits
+     * MODBUS Function 0x02
      * \param address - Refernce Address
      * \param amount  - Amount of BITS to Read
      * \param buffer  - Buffer to store Data Read from Input Bits
@@ -95,8 +99,8 @@ public:
     int readInputBits(uint16_t address, uint16_t amount, bool *buffer); // Replace buffer with something sensible?
 
     /*!
-     * Read Holding Registers 
-     * MODBUS Function 0x03 
+     * Read Holding Registers
+     * MODBUS Function 0x03
      * \param address  - Reference Address
      * \param amount   - Amount of Registers to Read
      * \param buffer   - Buffer to Store Data Read from Registers
@@ -104,8 +108,8 @@ public:
     int readHoldingRegisters(uint16_t address, uint16_t amount, uint16_t *buffer);
 
     /*!
-     * Read Input Registers 
-     * MODBUS Function 0x04 
+     * Read Input Registers
+     * MODBUS Function 0x04
      * \param address - Reference Address
      * \param amount  - Amount of registers to read
      * \param buffer  - Buffer to store Data Read from Registers
@@ -113,8 +117,8 @@ public:
     int readInputRegisters(uint16_t address, uint16_t amount, uint16_t *buffer);
 
     /*!
-     * Write Single Coils 
-     * MODBUS Function 0x05 
+     * Write Single Coils
+     * MODBUS Function 0x05
      * \param address  - Reference Address
      * \param to_write - Value to be written to Coil
      */
@@ -129,8 +133,8 @@ public:
     int writeRegister(uint16_t address, const uint16_t &value);
 
     /*!
-     * Write Multiple Coils 
-     * MODBUS Function 0x0F 
+     * Write Multiple Coils
+     * MODBUS Function 0x0F
      * \param address - Reference Address
      * \param amount  - Amount of coils to write
      * \param value   - Values to Be Written to Coils
@@ -138,8 +142,8 @@ public:
     int writeCoils(uint16_t address, uint16_t amount, const bool *value);
 
     /*!
-     * Write Multiple Registers 
-     * MODBUS Function 0x10 
+     * Write Multiple Registers
+     * MODBUS Function 0x10
      * \param address - Reference Address
      * \param amount  - Amount of Value to Write
      * \param value   - Values to Be Written to the Registers
@@ -182,7 +186,7 @@ private:        // Methods
      * \param amount        - Amount of data to be written
      * \param function_code - Modbus Functional Code
      * \param value         - Data to be written
-     * 
+     *
      * \return int          -
      */
     int                 modbusWrite(uint16_t address, uint16_t amount, int function_code, const uint16_t *value);
