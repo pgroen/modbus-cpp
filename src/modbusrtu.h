@@ -5,3 +5,17 @@
  *  LICENSE file in the root directory of this source tree.
  */
 
+#include "modbusbase.h"
+
+namespace osdev {
+namespace components {
+namespace modbus {
+
+class ModbusRtu : public ModbusBase
+{
+
+};
+
+}   /* End namespace modbus */
+}   /* End namespace components */
+}   /* End namespace osdev */
