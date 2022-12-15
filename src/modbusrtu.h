@@ -6,6 +6,7 @@
  */
 
 #include "modbusbase.h"
+#include "connectionconfig.h"
 
 namespace osdev {
 namespace components {
@@ -14,6 +15,9 @@ namespace modbus {
 class ModbusRtu : public ModbusBase
 {
 public:
+    ModbusRtu( const ConnectionConfig &conf );
+    virtual ~ModbusRtu() {}
+
     virtual bool Connect() override;
     virtual bool Close() override;
 
@@ -33,7 +37,8 @@ public:
     virtual int modbusReceive(uint8_t *buffer) override;
 
 private:
-
+    ConnectionConfig    m_conConfig;
+    int                 m_socket;
 };
 
 }   /* End namespace modbus */

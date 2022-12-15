@@ -7,6 +7,7 @@
 #pragma once
 
 #include <string>
+#include <termios.h>
 
 namespace osdev {
 namespace components {
@@ -29,19 +30,6 @@ public:
         NONE
     };
 
-    enum class E_BAUDRATE
-    {
-        R1200   = 1200,
-        R2400   = 2400,
-        R4800   = 4800,
-        R9600   = 9600,
-        R19200  = 19200,
-        R38400  = 38400,
-        R57600  = 57600,
-        R76800  = 76800,
-        R115200 = 115200
-    };
-
     ConnectionConfig();
 
     // Getters and Setters
@@ -51,8 +39,8 @@ public:
     void                setPortName(const std::string &port_name) { m_portName = port_name; }
     std::string         getPortName() { return m_portName; }
 
-    void                setBaudRate( E_BAUDRATE baud_rate ) { m_baudRate = baud_rate; }
-    E_BAUDRATE          getBaudRate() const { return m_baudRate; }
+    void                setBaudRate( speed_t baud_rate ) { m_baudRate = baud_rate; }
+    speed_t             getBaudRate() const { return m_baudRate; }
 
     void                setParity(E_PARITY parity) { m_parity = parity; }
     E_PARITY            getParity() const { return m_parity; }
@@ -74,8 +62,8 @@ public:
 
 private:
     E_CONNECTIONTYPE    m_conType  = E_CONNECTIONTYPE::UNKNOWN;
-    std::string         m_portName;
-    E_BAUDRATE          m_baudRate = E_BAUDRATE::R9600;
+    std::string         m_portName = "/dev/ttyUSB0";
+    speed_t             m_baudRate = B9600;
     E_PARITY            m_parity   = E_PARITY::NONE;
     int                 m_dataBits = 8;
     int                 m_stopBits = 1;
