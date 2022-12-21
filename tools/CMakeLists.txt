@@ -7,6 +7,5 @@ LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/submodules/cmake)
 include(projectheader)
 project_header(modbus-cpp)
 
-add_subdirectory(src)
-add_subdirectory(tools)
-
+add_subdirectory(modbus-master)
+# add_subdirectory(modbus-slave)
