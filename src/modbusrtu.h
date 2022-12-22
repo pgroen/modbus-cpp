@@ -15,7 +15,7 @@ namespace modbus {
 class ModbusRtu : public ModbusBase
 {
 public:
-    ModbusRtu( const ConnectionConfig &conf );
+    explicit ModbusRtu( const ConnectionConfig &conf );
     virtual ~ModbusRtu() {}
 
     virtual bool Connect() override;

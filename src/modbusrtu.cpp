@@ -49,7 +49,7 @@ bool ModbusRtu::Connect()
     l_tty.c_cflag |= CREAD | CLOCAL;            // Turn on READ & ignore ctrl lines (CLOCAL = 1)
 
     /* local modes */
-    l_tty.c_lflag &= ~ICANON;                   // ..... Yes..
+    l_tty.c_lflag &= ~ICANON;                   // Something, something CANONICAL.. Something, something Dark Side....
     l_tty.c_lflag &= ~ECHO;                     // Disable echo
     l_tty.c_lflag &= ~ECHOE;                    // Disable Erasure
     l_tty.c_lflag &= ~ECHONL;                   // Diasble new-line echo
