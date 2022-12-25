@@ -8,5 +8,6 @@ include(projectheader)
 project_header(modbus-cpp)
 
 add_subdirectory(src)
-add_subdirectory(tools)
+add_subdirectory(tests)
+# add_subdirectory(tools)
 

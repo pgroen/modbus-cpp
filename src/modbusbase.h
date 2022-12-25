@@ -57,8 +57,8 @@ namespace modbus {
 class ModbusBase
 {
 public:
-    ModbusBase();
-    virtual ~ModbusBase();
+    ModbusBase() {}
+    virtual ~ModbusBase() {}
 
     // Pure virtuals. Override when inherited.
     virtual bool Connect() = 0;
