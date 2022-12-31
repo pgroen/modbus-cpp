@@ -23,5 +23,11 @@ TEST(ConnectionConfigTest, SerialPortConfig)
     oConfig.setPortName( "/dev/ttyUSB0" );
 
     // Test all parameters
-
+    EXPECT_EQ(oConfig.getBaudRate(), B9600);
+    EXPECT_EQ(oConfig.getConnectionType(), ConnectionConfig::E_CONNECTIONTYPE::SERIAL);
+    EXPECT_EQ(oConfig.getDataBits(), 8);
+    EXPECT_EQ(oConfig.getStopBits(), 1);
+    EXPECT_EQ(oConfig.getFrameTimeout(), 10);
+    EXPECT_EQ(oConfig.getParity(), ConnectionConfig::E_PARITY::NONE);
+    EXPECT_EQ(oConfig.getPortName(), "/dev/ttyUSB0");
 }

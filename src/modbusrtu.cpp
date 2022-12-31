@@ -17,15 +17,15 @@
 
 using namespace osdev::components::modbus;
 
-ModbusRtu::ModbusRtu( const ConnectionConfig &conf )
-    : m_conConfig( conf )
+ModbusRtu::ModbusRtu(const ConnectionConfig &conf)
+    : m_conConfig(conf)
     , m_socket( -1 )
 {
 }
 
 bool ModbusRtu::Connect()
 {
-    m_socket = open( m_conConfig.getPortName().c_str(), O_RDWR);
+    m_socket = open(m_conConfig.getPortName().c_str(), O_RDWR);
     if(m_socket == -1)
     {
         return false;
@@ -36,16 +36,16 @@ bool ModbusRtu::Connect()
     // Read in existing settings, and handle any error
     if( tcgetattr(m_socket, &l_tty) != 0 )
     {
-        // Replace later on with a logger line.
+        //TODO: Replace later on with a logger line.
         return false;
     }
 
     /* Control modes */
-    l_tty.c_cflag &= ~PARENB;                   // Clear parity bit, disabling parity (most common)
-    l_tty.c_cflag &= ~CSTOPB;                   // Clear stop field, only one stop bit used in communication (most common)
+    l_tty.c_cflag &= ~PARENB;                   // Clear parity bit, disabling parity
+    l_tty.c_cflag &= ~CSTOPB;                   // Clear stop field, only one stop bit used in communication
     l_tty.c_cflag &= ~CSIZE;                    // Clear all bits that set the data field
-    l_tty.c_cflag |= CS8;                       // 8 bits per byte (most common)
-    l_tty.c_cflag &= ~CRTSCTS;                  // Disable RTS / CTS hardware flow control (most common)
+    l_tty.c_cflag |= CS8;                       // 8 bits per byte
+    l_tty.c_cflag &= ~CRTSCTS;                  // Disable RTS / CTS hardware flow control
     l_tty.c_cflag |= CREAD | CLOCAL;            // Turn on READ & ignore ctrl lines (CLOCAL = 1)
 
     /* local modes */

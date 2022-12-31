@@ -212,10 +212,10 @@ private:        // Members (Giggity!)
     bool                m_connected{};
     uint32_t            m_msg_id{};
     int                 m_slaveId{};
-    bool                m_error{};
-    int                 m_error_number{};
-    std::string         m_error_message;
-    unsigned int        m_max_message_length;
+    bool                m_error{false};
+    int                 m_error_number{0};
+    std::string         m_error_message = "";
+    unsigned int        m_max_message_length = 254;
 
 };
 

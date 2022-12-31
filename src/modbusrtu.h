@@ -18,22 +18,10 @@ public:
     explicit ModbusRtu( const ConnectionConfig &conf );
     virtual ~ModbusRtu() {}
 
+    /*! Implementation of ModbusBase */
     virtual bool Connect() override;
     virtual bool Close() override;
-
-    /*!
-     * \brief modbusSend
-     * \param to_send
-     * \param length
-     * \return
-     */
     virtual int modbusSend(uint8_t *to_send, size_t length) override;
-
-    /*!
-     * \brief modbusReceive
-     * \param buffer
-     * \return
-     */
     virtual int modbusReceive(uint8_t *buffer) override;
 
 private:
