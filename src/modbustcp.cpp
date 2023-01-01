@@ -9,8 +9,8 @@
 using namespace osdev::components::modbus;
 
 ModbusTcp::ModbusTcp(const ConnectionConfig &con_config)
-    : m_host( con_config.getIpAddress() )
-    , m_port( con_config.getPortNumber() )
+    : m_host(con_config.getIpAddress())
+    , m_port(con_config.getPortNumber())
 {
 
 }
