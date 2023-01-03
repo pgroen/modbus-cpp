@@ -49,7 +49,7 @@ public:
     virtual int modbusReceive(uint8_t *buffer) override;
 
 private:
-    std::string     m_host {};
+    std::string     m_host {"127.0.0.1"};
     uint16_t        m_port {502};
     X_SOCKET        m_socket {-1};
     SOCKADDR_IN     m_server {};

@@ -67,7 +67,7 @@ private:
     E_PARITY            m_parity   = E_PARITY::NONE;
     int                 m_dataBits = 8;
     int                 m_stopBits = 1;
-    std::string         m_ipAddress{};
+    std::string         m_ipAddress = "127.0.0.1";
     unsigned int        m_portNumber = 502;
     int                 m_frameTimeOut = -1;
 
