@@ -5,6 +5,7 @@
 # ****************************************************************
 add_executable(modbustest
     connectionconfigtest.cpp
+    requesttest.cpp
 )
 
 target_include_directories(modbustest PRIVATE

@@ -11,6 +11,10 @@
 #include <variant>
 #include <vector>
 
+namespace osdev {
+namespace components {
+namespace modbus {
+
 /// The response based on the \ref Request made.
 struct Response
 {
@@ -33,6 +37,7 @@ public:
     /// We only support a small subset of the ModBus Standard.
     enum class FunctionCode
     {
+        FC_UNKNOWN,
         READ_COILS,
         READ_DISCRETE_INPUTS,
         READ_HOLDING_REGISTERS,
@@ -44,6 +49,13 @@ public:
         WRITE_FILE_RECORD,
     };
 
+    explicit Request()
+        : m_functionCode(Request::FunctionCode::FC_UNKNOWN)
+        , m_slaveId(0)
+        , m_startAddress(0x00)
+        , m_numberOfRegisters(0x00)
+    {}
+
     /// Constructor taking all necessary information to create a request.
     ///
     /// @param  functionCode    - The code of the action this request wants to perform.
@@ -51,34 +63,53 @@ public:
     /// @param  startAddress    - Register number to start reading from or writing to.
     /// @param  numberOfItems   - Number of items to read or write from start_address.
     /// @param  callback        - Function to call when this request returns a response.
-    Request(Request::FunctionCode functionCode,
-            int slaveId,
-            int startAddress,
-            int numberOfItems,
+    Request(Request::FunctionCode function_code,
+            int slave_id,
+            int start_address,
+            int num_of_regs,
             std::function<bool(Response)> callback)
-        : m_functionCode(functionCode)
-        , m_slaveId(slaveId)
-        , m_startAddress(startAddress)
-        , m_numberOfItems(numberOfItems)
+        : m_functionCode(function_code)
+        , m_slaveId(slave_id)
+        , m_startAddress(start_address)
+        , m_numberOfRegisters(num_of_regs)
     {
         callbacks.push_back(callback);
     }
 
+    // Begin Getters and setters.
+    /// Sets the functioncode for this request
+    /// @param  function_code - The functioncode enum.
+    void setFunctionCode(FunctionCode function_code) {m_functionCode = function_code;}
+
     /// @return The functioncode this request handles.
-    FunctionCode GetFunctionCode() const {return m_functionCode;}
+    FunctionCode getFunctionCode() const {return m_functionCode;}
+
+    /// Sets the slaveId of the device this request is intended for.
+    /// @param  slave_id - The slave Id of the device.
+    void setSlaveId(const int slave_id) {m_slaveId = slave_id;}
 
     /// @return The slaveID of the device this request is intended for.
-    int GetSlaveId() const {return m_slaveId;}
+    uint8_t getSlaveId() const {return m_slaveId;}
+
+    /// Sets the start address of the register(s) we want to read from.
+    /// @param start_address - The start address
+    void    setStartAddress(const uint8_t start_address) {m_startAddress = start_address;}
 
     /// @return The start Address of the register(s) we're reading.
-    int GetStartAddress() const {return m_startAddress;}
+    uint8_t getStartAddress() const {return m_startAddress;}
+
+    /// Sets the number of registers we want to read from the start address.
+    /// @param  num_of_regs - The number of registers to read from the start address
+    void setNumberOfRegisters(const uint8_t num_of_regs) {m_numberOfRegisters = num_of_regs;}
 
     /// @return The number of registers we read from the \ref m_startAddress.
-    int GetNumberOfItems() const {return m_numberOfItems;}
+    uint8_t getNumberOfRegisters() const {return m_numberOfRegisters;}
+
+    // End Getters and setters.
 
     /// @return The values read from, or to be written to, the device.
     /// @note never change the length of this vector.
-    std::vector<int> GetDataBuffer() const {return m_dataBuffer;}
+    std::vector<uint8_t> getDataBuffer() const {return m_dataBuffer;}
 
     /// @return Callbacks registered to call when new data is available.
     /// @note Functionn pointer returns False if the device state is OFFLINE. True, otherwise.
@@ -86,17 +117,22 @@ public:
 
 private:
     /// Function code of this request.
-    FunctionCode    m_functionCode;
+    FunctionCode            m_functionCode;
 
     /// SlaveID of this request.
-    int             m_slaveId;
+    uint8_t                 m_slaveId;
 
     /// Start address of the register for this request
-    int             m_startAddress;
+    uint8_t                 m_startAddress;
 
     /// Amount of registers to read/write in this request
-    int             m_numberOfItems;
+    uint8_t                 m_numberOfRegisters;
 
     /// Data to send to the device; must be the same size as \ref m_numberOfItems.
-    std::vector<int>    m_dataBuffer;
+    std::vector<uint8_t>    m_dataBuffer;
 };
+
+}   /* End namespace modbus */
+}   /* End namespace components */
+}   /* End namespace osdev */
+
