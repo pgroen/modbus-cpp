@@ -19,7 +19,6 @@ set(SRC_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/modbustcp.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/modbusrtu.h
     ${CMAKE_CURRENT_SOURCE_DIR}/modbusrtu.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/connectionconfig.h
     ${CMAKE_CURRENT_SOURCE_DIR}/connectionconfig.cpp
 )
 

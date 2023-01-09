@@ -111,25 +111,25 @@ public:
     /// @note never change the length of this vector.
     std::vector<uint8_t> getDataBuffer() const {return m_dataBuffer;}
 
-    /// @return Callbacks registered to call when new data is available.
-    /// @note Functionn pointer returns False if the device state is OFFLINE. True, otherwise.
-    std::vector<std::function<bool(Response)>> callbacks;
-
 private:
     /// Function code of this request.
-    FunctionCode            m_functionCode;
+    FunctionCode            m_functionCode = FunctionCode::FC_UNKNOWN;
 
     /// SlaveID of this request.
-    uint8_t                 m_slaveId;
+    uint8_t                 m_slaveId = 0;
 
     /// Start address of the register for this request
-    uint8_t                 m_startAddress;
+    uint8_t                 m_startAddress = 0x00;
 
     /// Amount of registers to read/write in this request
-    uint8_t                 m_numberOfRegisters;
+    uint8_t                 m_numberOfRegisters = 0x00;
 
     /// Data to send to the device; must be the same size as \ref m_numberOfItems.
-    std::vector<uint8_t>    m_dataBuffer;
+    std::vector<uint8_t>    m_dataBuffer = {};
+
+    /// @return Callbacks registered to call when new data is available.
+    /// @note Functionn pointer returns False if the device state is OFFLINE. True, otherwise.
+    std::vector<std::function<bool(Response)>> callbacks = {};
 };
 
 }   /* End namespace modbus */
