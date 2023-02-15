@@ -6,6 +6,8 @@
  */
 #include "modbustcp.h"
 
+#include <netinet/tcp.h>
+
 using namespace osdev::components::modbus;
 
 ModbusTcp::ModbusTcp(const ConnectionConfig &con_config)
@@ -44,9 +46,13 @@ bool ModbusTcp::Connect()
         timeout.tv_sec = 20; // after 20 seconds connect() will timeout
         timeout.tv_usec = 0;
 
+        // Set the socket options..
+        int l_flag = 1;
 
         setsockopt(m_socket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char *>(&timeout), sizeof(timeout));
         setsockopt(m_socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char *>(&timeout), sizeof(timeout));
+        setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char *>(&l_flag), sizeof(int));
+
         m_server.sin_family = AF_INET;
         m_server.sin_addr.s_addr = inet_addr(m_host.c_str());
         m_server.sin_port = htons(m_port);

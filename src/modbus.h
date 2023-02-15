@@ -7,6 +7,8 @@
 #pragma once
 
 #include "imodbus.h"
+#include "modbusbase.h"
+#include <memory>
 
 namespace osdev {
 namespace components {
@@ -19,10 +21,14 @@ public:
 
     virtual ~ModBus() {}
 
+    // Implementation
     virtual bool Open(const ConnectionConfig &connection_config) override;
     virtual bool Close() override;
     virtual std::vector<uint8_t> Read(const Request &request) override;
     virtual std::vector<uint8_t> Write(const Request &request) override;
+
+private:
+    std::unique_ptr<ModbusBase> m_modbus;
 };
 
 }   /* End namespace modbus */
