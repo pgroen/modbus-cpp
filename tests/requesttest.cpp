@@ -50,71 +50,71 @@ TEST(RequestTest, RequestNumberOfRegisters)
 TEST(RequestTest, RequestReadCoils)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::READ_COILS);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_READ_COILS);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::READ_COILS);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_READ_COILS);
 }
 
 TEST(RequestTest, RequestReadDiscreteInputs)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::READ_DISCRETE_INPUTS);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_READ_DISCRETE_INPUTS);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::READ_DISCRETE_INPUTS);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_READ_DISCRETE_INPUTS);
 }
 
 TEST(RequestTest, RequestReadHoldingRegisters)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::READ_HOLDING_REGISTERS);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_READ_HOLDING_REGISTERS);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::READ_HOLDING_REGISTERS);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_READ_HOLDING_REGISTERS);
 }
 
 TEST(RequestTest, RequestReadInputRegisters)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::READ_INPUT_REGISTERS);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_READ_INPUT_REGISTERS);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::READ_INPUT_REGISTERS);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_READ_INPUT_REGISTERS);
 }
 
 TEST(RequestTest, RequestWriteSingleCoil)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::WRITE_SINGLE_COIL);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_WRITE_SINGLE_COIL);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::WRITE_SINGLE_COIL);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_WRITE_SINGLE_COIL);
 }
 
 TEST(RequestTest, RequestWriteSingleRegister)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::WRITE_SINGLE_REGISTER);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_WRITE_SINGLE_REGISTER);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::WRITE_SINGLE_REGISTER);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_WRITE_SINGLE_REGISTER);
 }
 
 TEST(RequestTest, RequestWriteMultipleCoils)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::WRITE_MULTIPLE_COILS);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_WRITE_MULTIPLE_COILS);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::WRITE_MULTIPLE_COILS);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_WRITE_MULTIPLE_COILS);
 }
 
 TEST(RequestTest, RequestWriteMultipleRegisters)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::WRITE_MULTIPLE_REGISTERS);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_WRITE_MULTIPLE_REGISTERS);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::WRITE_MULTIPLE_REGISTERS);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_WRITE_MULTIPLE_REGISTERS);
 }
 
 TEST(RequestTest, RequestWriteFileRecord)
 {
     Request oRequest;
-    oRequest.setFunctionCode(Request::FunctionCode::WRITE_FILE_RECORD);
+    oRequest.setFunctionCode(Request::FunctionCode::FC_WRITE_FILE_RECORD);
 
-    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::WRITE_FILE_RECORD);
+    EXPECT_EQ(oRequest.getFunctionCode(), Request::FunctionCode::FC_WRITE_FILE_RECORD);
 }
