@@ -21,13 +21,12 @@ public:
     ModBus();
 
     /// Default DTor
-    virtual ~ModBus() {}
+    virtual ~ModBus();
 
     // Implementation of IModBus
     virtual bool Open(const ConnectionConfig &connection_config) override;
     virtual bool Close() override;
-    virtual std::vector<uint8_t> Read(const Request &request) override;
-    virtual std::vector<uint8_t> Write(const Request &request) override;
+    virtual Response SendRequest(const Request &request) override;
 
 private:
     std::unique_ptr<ModbusBase> m_modbus = nullptr;

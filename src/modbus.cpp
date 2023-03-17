@@ -1,4 +1,6 @@
 #include "modbus.h"
+#include "modbusrtu.h"
+#include "modbustcp.h"
 
 using namespace osdev::components::modbus;
 
@@ -6,29 +8,51 @@ ModBus::ModBus()
 {
 }
 
+ModBus::~ModBus()
+{
+    if(m_modbus)
+    {
+        m_modbus.reset(nullptr);
+    }
+}
+
 bool ModBus::Open(const ConnectionConfig &connection_config)
 {
-    switch(connection_config.getConnectionType())
+    if(m_modbus == nullptr)
     {
-        case ConnectionConfig::E_CONNECTIONTYPE::SERIAL:
-            break;
-        case ConnectionConfig::E_CONNECTIONTYPE::TCP:
-            break;
-        case ConnectionConfig::E_CONNECTIONTYPE::UNKNOWN:
-            break;
+        switch(connection_config.getConnectionType())
+        {
+            case ConnectionConfig::E_CONNECTIONTYPE::SERIAL:
+            m_modbus = std::make_unique<ModbusRtu>(connection_config);
+                break;
+            case ConnectionConfig::E_CONNECTIONTYPE::TCP:
+                m_modbus = std::make_unique<ModbusTcp>(connection_config);
+                break;
+            case ConnectionConfig::E_CONNECTIONTYPE::UNKNOWN:
+                return false;
+                break;
+        }
     }
 
-    return true;
+    if(m_modbus->getConnected())
+    {
+        m_modbus->Close();
+    }
+
+    return m_modbus->Connect();
 }
 
 bool ModBus::Close()
 {
+    if(m_modbus != nullptr)
+    {
+        m_modbus->Close();
+    }
     return true;
 }
 
-std::vector<uint8_t> ModBus::Read(const Request &request)
+Response ModBus::SendRequest(const Request &request)
 {
-    std::vector<uint8_t> vecResult;
 
     switch(request.getFunctionCode())
     {
@@ -56,12 +80,5 @@ std::vector<uint8_t> ModBus::Read(const Request &request)
             break;
     }
 
-    return vecResult;
-}
-
-std::vector<uint8_t> ModBus::Write(const Request &request)
-{
-    (void)request;
-
-    return std::vector<uint8_t>();
+    return Response;
 }

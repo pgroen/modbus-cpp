@@ -23,8 +23,8 @@ struct Response
     /// Negative values indicate failure and can be resolved with \ref Modbus::ErrorToString() to a string.
     int resultValue = -1;
 
-    /// Buffer contaiining the response of the \ref Request.
-    std::vector<std::variant<uint8_t, uint16_t>> responseBuffer = {};
+    /// Buffer containing the response of the \ref Request.
+    std::vector<std::variant<bool, uint8_t, uint16_t>> responseBuffer = {};
 };
 
 /// A request to be made over ModBus.

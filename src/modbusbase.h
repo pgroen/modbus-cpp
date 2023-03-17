@@ -176,9 +176,9 @@ private:        // Methods
      * \param address       - Reference Address
      * \param function_code - Modbus Functional Code
      */
-    void        buildRequest(uint8_t *to_send, uint16_t address, int function_code) const;
+    void                buildRequest(uint8_t *to_send, uint16_t address, int function_code) const;
 
-    int         modbusRead(uint16_t address, uint16_t amount, int function_code);
+    int                 modbusRead(uint16_t address, uint16_t amount, int function_code);
 
     /*!
      * Write Request Builder and Sender
