@@ -1,11 +1,12 @@
 # ****************************************************************
 # Copyright (c)2022 Peter M. Groen
-# This file is licensed under the MIT license found in the 
+# This file is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 # ****************************************************************
 add_executable(modbustest
     connectionconfigtest.cpp
     requesttest.cpp
+    modbusstacktest.cpp
 )
 
 target_include_directories(modbustest PRIVATE

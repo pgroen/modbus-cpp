@@ -129,7 +129,7 @@ private:
     std::vector<uint8_t>    m_dataBuffer = {};
 
     /// @return Callbacks registered to call when new data is available.
-    /// @note Functionn pointer returns False if the device state is OFFLINE. True, otherwise.
+    /// @note Function pointer returns False if the device state is OFFLINE. True, otherwise.
     std::vector<std::function<bool(Response)>> callbacks = {};
 };
 

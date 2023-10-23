@@ -297,7 +297,7 @@ int ModbusBase::modbusWrite(uint16_t address, uint16_t amount, int function_code
     // Declare as pure virtual and implement in the transport-specific class? 
     // For now we focus on TCP as it is easier to implement.
     int status = 0;
-    uint8_t *to_send;
+    uint8_t *to_send = nullptr;
 
     switch (function_code)
     {
