@@ -34,7 +34,7 @@ bool ModBus::Open(const ConnectionConfig &connection_config)
         }
     }
 
-    if(m_modbus->getConnected())
+    if(m_modbus->isConnected())
     {
         m_modbus->Close();
     }

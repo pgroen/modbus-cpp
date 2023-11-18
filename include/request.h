@@ -49,14 +49,15 @@ public:
         FC_READ_FILE_RECORD,
         FC_WRITE_FILE_RECORD,
     };
-
-    explicit Request()
+    
+    
+    Request()
         : m_functionCode(Request::FunctionCode::FC_UNKNOWN)
         , m_slaveId(0)
         , m_startAddress(0x00)
         , m_numberOfRegisters(0x00)
     {}
-
+    
     /// Constructor taking all necessary information to create a request.
     ///
     /// @param  functionCode    - The code of the action this request wants to perform.

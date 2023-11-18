@@ -5,8 +5,11 @@
  ****************************************************************/
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <iostream>
 
 #include "connectionconfig.h"
+#include "modbus.h"
+#include "request.h"
 
 using namespace osdev::components::modbus;
 
@@ -23,5 +26,20 @@ TEST(ModbusStackTest, StackConnectRTU)
     oConfig.setPortName("/dev/ttyUSB0");
 
     // Create the modbus-stack..
+    ModBus oModbus;
+    EXPECT_EQ(oModbus.Open(oConfig), true);
+    
+    // Create a request to read the Temperature from a physical device XY-MD02
+    Request request(Request::FunctionCode::FC_READ_HOLDING_REGISTERS, 
+                    1, 
+                    0x0001, 
+                    2, 
+                    [](Response response) mutable
+                    {
+                        std::cout << "Result: " << response.resultValue << std::endl;
+                        return true;
+                    });
 
+    // Send the request
+    Response response = oModbus.SendRequest(request);
 }

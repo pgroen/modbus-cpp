@@ -152,7 +152,7 @@ public:
 
     // Getters and Setters.
     void                setConnected(bool connected = false){ m_connected = connected;}
-    bool                getConnected() const { return m_connected; }
+    bool                isConnected() const { return m_connected; }
     void                setMessageId( uint32_t message_id ) { m_msg_id = message_id; }
     uint32_t            getMessageId() const { return m_msg_id; }
     void                setSlaveId(int slave_id){ m_slaveId = slave_id; }

@@ -65,7 +65,7 @@ bool ModbusTcp::Connect()
 
         LOG("Connected");
         ModbusBase::setConnected( true );
-        return true;
+        return ModbusBase::isConnected();
 }
 
 bool ModbusTcp::Close()
@@ -73,7 +73,7 @@ bool ModbusTcp::Close()
     X_CLOSE_SOCKET(m_socket);
     LOG("Socket Closed");
     ModbusBase::setConnected(false);
-    return ModbusBase::getConnected();
+    return ModbusBase::isConnected();
 }
 
 int ModbusTcp::modbusReceive(uint8_t *buffer)
